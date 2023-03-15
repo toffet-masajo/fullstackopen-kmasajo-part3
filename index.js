@@ -54,14 +54,22 @@ app.delete('/api/person/:id', (req, res) => {
 
 app.post('/api/persons', (req, res) => {
   const person = req.body;
-    
-  let id = Math.floor(Math.random() * MAX_ENTRIES);
-  while(persons.find(person => person.id === id));
 
-  person.id = id;
-  persons = persons.concat(person);
+  if(person.name === undefined || person.name === null || person.name.length <= 0)
+    res.status(400).json({'error': 'name missing'}).end();
+  else if(person.number === undefined || person.number === null || person.number.length <= 0)
+    res.status(400).json({'error': 'number missing'}).end();
+  else if(persons.find(entry => entry.name.toLowerCase() === person.name.toLowerCase()))
+    res.status(400).json({'error': 'name already exists'}).end();
+  else {
+    let id = Math.floor(Math.random() * MAX_ENTRIES);
+    while(persons.find(person => person.id === id));
+
+    person.id = id;
+    persons = persons.concat(person);
     
-  res.json(person);
+    res.json(person);
+  }
 });
       
 const PORT = 3001;
