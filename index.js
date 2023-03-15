@@ -62,7 +62,7 @@ app.post('/api/persons', (req, res) => {
   else if(persons.find(entry => entry.name.toLowerCase() === person.name.toLowerCase()))
     res.status(400).json({'error': 'name already exists'}).end();
   else {
-    let id = Math.floor(Math.random() * MAX_ENTRIES);
+    let id = Math.floor(Math.random() * MAX_ENTRIES) + 1;
     while(persons.find(person => person.id === id));
 
     person.id = id;
