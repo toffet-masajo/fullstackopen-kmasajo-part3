@@ -1,0 +1,34 @@
+{
+  "name": "fullstackopen-kmasajo-part3",
+  "version": "1.0.0",
+  "description": "Exercise for part3 of FullStackOpen course",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toffet-masajo/fullstackopen-kmasajo-part3.git"
+  },
+  "keywords": [
+    "node",
+    "nodejs",
+    "express",
+    "fullstack",
+    "web"
+  ],
+  "author": "Kristoffer Masajo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/toffet-masajo/fullstackopen-kmasajo-part3/issues"
+  },
+  "homepage": "https://github.com/toffet-masajo/fullstackopen-kmasajo-part3#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.21"
+  }
+}
