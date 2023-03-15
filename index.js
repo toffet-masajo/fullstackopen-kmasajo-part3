@@ -1,6 +1,9 @@
 const express = require('express');
 
+const MAX_ENTRIES = 100;
+
 const app = express();
+app.use(express.json());
 
 let persons = [
   { 
@@ -26,23 +29,22 @@ let persons = [
 ];
 
 app.get('/api/persons', (req, res) => {
-  res.json(persons)
+  res.json(persons);
 });
 
 app.get('/api/info', (req, res) => {
   const data = 
-    `<p>Phonebook has ${persons.length} entries</p>
-     <p>${new Date()}</p>`
-  res.send(data)
+    `<p>Phonebook has ${persons.length} entries</p>\n<p>${new Date()}</p>`;
+  res.send(data);
 });
 
 app.get('/api/person/:id', (req, res) => {
   const id = Number(req.params.id);
   const item = persons.find(person => person.id === id);
   if(item) res.json(item);
-  else res.status(404).end();
+    else res.status(404).end();
 });
-
+  
 app.delete('/api/person/:id', (req, res) => {
   const id = Number(req.params.id);
   persons = persons.filter(person => person.id !== id);
@@ -50,7 +52,19 @@ app.delete('/api/person/:id', (req, res) => {
   res.status(204).end();
 });
 
-const PORT = 3001
+app.post('/api/persons', (req, res) => {
+  const person = req.body;
+    
+  let id = Math.floor(Math.random() * MAX_ENTRIES);
+  while(persons.find(person => person.id === id));
+
+  person.id = id;
+  persons = persons.concat(person);
+    
+  res.json(person);
+});
+      
+const PORT = 3001;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
+  console.log(`Server running on port ${PORT}`);
 });
