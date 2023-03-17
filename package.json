@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "test"
+    "test": "test",
+    "build:ui": "rm -rf build && cd ../FullStackOpen-KMasajo/part2/phonebook && npm run build && cp -r build ../../../fullstackopen-kmasajo-part3/.",
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push"
   },
   "repository": {
     "type": "git",

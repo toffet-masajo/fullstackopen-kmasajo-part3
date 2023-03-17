@@ -6,6 +6,7 @@ const MAX_ENTRIES = 100;
 
 const app = express();
 app.use(express.json());
+app.use(express.static('build'));
 
 morgan.token('type', function(req, res) {return JSON.stringify(req.body)});
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :type'));
