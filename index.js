@@ -1,7 +1,9 @@
+require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
-   
+const Person = require('./models/person');
+
 const MAX_ENTRIES = 100;
 
 const app = express();
@@ -37,20 +39,24 @@ let persons = [
 ];
 
 app.get('/api/persons', (req, res) => {
-  res.json(persons);
+  Person.find({}).then(results => {
+    res.json(results);
+  })
 });
 
 app.get('/api/info', (req, res) => {
-  const data = 
-    `<p>Phonebook has ${persons.length} entries</p>\n<p>${new Date()}</p>`;
-  res.send(data);
+  Person.find({}).then(results => {
+    const data = 
+      `<p>Phonebook has ${results.length} entries</p>\n<p>${new Date()}</p>`;
+    res.send(data);
+  });
 });
 
 app.get('/api/person/:id', (req, res) => {
-  const id = Number(req.params.id);
-  const item = persons.find(person => person.id === id);
-  if(item) res.json(item);
-    else res.status(404).end();
+  Person.findById(req.params.id)
+    .then(person => {
+      res.json(person);
+    });
 });
   
 app.delete('/api/person/:id', (req, res) => {
