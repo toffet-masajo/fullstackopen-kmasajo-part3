@@ -73,16 +73,12 @@ app.post('/api/persons', (req, res) => {
     res.status(400).json({'error': 'name missing'}).end();
   else if(person.number === undefined || person.number === null || person.number.length <= 0)
     res.status(400).json({'error': 'number missing'}).end();
-  else if(persons.find(entry => entry.name.toLowerCase() === person.name.toLowerCase()))
-    res.status(400).json({'error': 'name already exists'}).end();
   else {
-    let id = Math.floor(Math.random() * MAX_ENTRIES) + 1;
-    while(persons.find(person => person.id === id));
+    const personObj = new Person({"name" : person.name, "number" : person.number});
 
-    person.id = id;
-    persons = persons.concat(person);
-    
-    res.json(person);
+    personObj.save().then(result => {
+      res.json(result);
+    });
   }
 });
       
