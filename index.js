@@ -15,29 +15,6 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :t
 
 app.use(cors());
 
-let persons = [
-  { 
-    "id": 1,
-    "name": "Arto Hellas", 
-    "number": "040-123456"
-  },
-  { 
-    "id": 2,
-    "name": "Ada Lovelace", 
-    "number": "39-44-5323523"
-  },
-  { 
-    "id": 3,
-    "name": "Dan Abramov", 
-    "number": "12-43-234345"
-  },
-  { 
-    "id": 4,
-    "name": "Mary Poppendieck", 
-    "number": "39-23-6423122"
-  }
-];
-
 app.get('/api/persons', (req, res) => {
   Person.find({}).then(results => {
     res.json(results);
@@ -58,10 +35,7 @@ app.get('/api/persons/:id', (req, res) => {
       if(person) res.json(person);
       else res.status(404).end();
     })
-    .catch(error => {
-      console.log(error);
-      res.status(400).send({error: 'Invalid id'});
-    });
+    .catch(error => next(error));
 });
   
 app.delete('/api/persons/:id', (req, res, next) => {
@@ -69,19 +43,16 @@ app.delete('/api/persons/:id', (req, res, next) => {
     .then(result => {
       res.status(204).end();
     })
-    .catch(error => {
-      console.log(error);
-      next(error);
-    })
+    .catch(error => next(error));
 });
 
 app.post('/api/persons', (req, res) => {
   const person = req.body;
 
   if(person.name === undefined || person.name === null || person.name.length <= 0)
-    res.status(400).json({'error': 'name missing'}).end();
+    res.status(400).json({ error: 'name missing' }).end();
   else if(person.number === undefined || person.number === null || person.number.length <= 0)
-    res.status(400).json({'error': 'number missing'}).end();
+    res.status(400).json({ error: 'number missing' }).end();
   else {
     const personObj = new Person({"name" : person.name, "number" : person.number});
 
@@ -90,6 +61,22 @@ app.post('/api/persons', (req, res) => {
     });
   }
 });
+
+const unknownEndpoint = (req, res) => {
+  res.status(404).send({error: 'unknown endpoint'});
+};
+
+const errorHandler = (error, req, res, next) => {
+  console.log(error.message);
+
+  if( error.name === 'CastError' )
+    return res.status(400).send({error: 'malformed id'});
+
+  next(error);
+};
+
+app.use(unknownEndpoint);
+app.use(errorHandler);
       
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
