@@ -20,28 +20,23 @@ app.get('/api/persons', (req, res) => {
     res.json(results);
   })
 });
-
-app.get('/api/info', (req, res) => {
-  Person.find({}).then(results => {
-    const data = 
-      `<p>Phonebook has ${results.length} entries</p>\n<p>${new Date()}</p>`;
-    res.send(data);
-  });
-});
-
-app.get('/api/persons/:id', (req, res) => {
-  Person.findById(req.params.id)
-    .then(person => {
-      if(person) res.json(person);
-      else res.status(404).end();
-    })
-    .catch(error => next(error));
-});
   
 app.delete('/api/persons/:id', (req, res, next) => {
   Person.findByIdAndRemove(req.params.id)
     .then(result => {
       res.status(204).end();
+    })
+    .catch(error => next(error));
+});
+
+app.put('/api/persons/:id', (req, res, next) => {
+  const body = req.body;  
+  const person = { name: body.name, number: body.number };
+
+  Person.findByIdAndUpdate(req.params.id, person, {new: true})
+    .then(result => {
+      if(result) res.json(person);
+      else res.status(404).send({error: 'unknown id'});
     })
     .catch(error => next(error));
 });
