@@ -20,6 +20,23 @@ app.get('/api/persons', (req, res) => {
     res.json(results);
   })
 });
+
+app.get('/api/info', (req, res) => {
+  Person.find({}).then(results => {
+    const data = 
+      `<p>Phonebook has ${results.length} entries</p>\n<p>${new Date()}</p>`;
+    res.send(data);
+  });
+});
+
+app.get('/api/persons/:id', (req, res, next) => {
+  Person.findById(req.params.id)
+    .then(person => {
+      if(person) res.json(person);
+      else res.status(404).end();
+    })
+    .catch(error => next(error));
+});
   
 app.delete('/api/persons/:id', (req, res, next) => {
   Person.findByIdAndRemove(req.params.id)
