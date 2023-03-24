@@ -8,7 +8,9 @@
     "dev": "nodemon index.js",
     "test": "test",
     "build:ui": "rm -rf build && cd ../FullStackOpen-KMasajo/part2/phonebook && npm run build && cp -r build ../../../fullstackopen-kmasajo-part3/.",
-    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push"
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push",
+    "lint": "eslint .",
+    "lint-fix": "eslint . --fix"
   },
   "repository": {
     "type": "git",
@@ -35,6 +37,7 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "eslint": "^8.36.0",
     "nodemon": "^2.0.21"
   }
 }
