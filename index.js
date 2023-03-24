@@ -50,7 +50,11 @@ app.put('/api/persons/:id', (req, res, next) => {
   const body = req.body;  
   const person = { name: body.name, number: body.number };
 
-  Person.findByIdAndUpdate(req.params.id, person, {new: true})
+  Person.findByIdAndUpdate(
+    req.params.id, 
+    person, 
+    { new: true, runValidators: true, context: 'query' }
+  )
     .then(result => {
       if(result) res.json(person);
       else res.status(404).send({error: 'unknown id'});
@@ -58,20 +62,16 @@ app.put('/api/persons/:id', (req, res, next) => {
     .catch(error => next(error));
 });
 
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', (req, res, next) => {
   const person = req.body;
+  const personObj = new Person({"name" : person.name, "number" : person.number});
 
-  if(person.name === undefined || person.name === null || person.name.length <= 0)
-    res.status(400).json({ error: 'name missing' }).end();
-  else if(person.number === undefined || person.number === null || person.number.length <= 0)
-    res.status(400).json({ error: 'number missing' }).end();
-  else {
-    const personObj = new Person({"name" : person.name, "number" : person.number});
-
-    personObj.save().then(result => {
+  personObj
+    .save()
+    .then(result => {
       res.json(result);
-    });
-  }
+    })
+    .catch(error => next(error));
 });
 
 const unknownEndpoint = (req, res) => {
@@ -83,6 +83,8 @@ const errorHandler = (error, req, res, next) => {
 
   if( error.name === 'CastError' )
     return res.status(400).send({error: 'malformed id'});
+  else if( error.name === 'ValidationError' )
+    return res.status(400).json({error: error.message});
 
   next(error);
 };
