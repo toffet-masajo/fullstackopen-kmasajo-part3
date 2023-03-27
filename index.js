@@ -64,12 +64,19 @@ app.post('/api/persons', (req, res, next) => {
   const person = req.body;
   const personObj = new Person({ 'name' : person.name, 'number' : person.number });
 
-  personObj
-    .save()
+  Person.findOne({ name: personObj.name })
     .then(result => {
-      res.json(result);
+      if( result && result.name === personObj.name )
+        res.status(400).send({ error: `${result.name} exists; refresh page to get updated data.` });
+      else
+        personObj
+          .save()
+          .then(result => {
+            res.json(result);
+          })
+          .catch(error => next(error));
     })
-    .catch(error => next(error));
+    .catch( (error) => next(error));
 });
 
 const unknownEndpoint = (req, res) => {
